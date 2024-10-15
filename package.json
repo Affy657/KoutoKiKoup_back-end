@@ -1,0 +1,35 @@
+{
+  "name": "koutokikoup_back-end",
+  "version": "1.0.0",
+  "description": "GRO KOUTO",
+  "main": "index.js",
+  "scripts": {
+    "start": "ts-node src/app.ts",
+    "dev": "nodemon --exec ts-node src/app.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Affy657/KoutoKiKoup_back-end.git"
+  },
+  "author": "ArmoirePasCommode",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Affy657/KoutoKiKoup_back-end/issues"
+  },
+  "homepage": "https://github.com/Affy657/KoutoKiKoup_back-end#readme",
+  "dependencies": {
+    "body-parser": "^1.20.3",
+    "cors": "^2.8.5",
+    "express": "^4.21.1",
+    "mongoose": "^8.7.1"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/mongoose": "^5.11.97",
+    "@types/node": "^22.7.5",
+    "nodemon": "^3.1.7",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.3"
+  }
+}
