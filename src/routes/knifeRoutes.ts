@@ -1,62 +1,77 @@
-import express, { Request, Response } from 'express';
-import Book from '../models/knife';
+import express, { Request, Response, RequestHandler } from 'express';
+import Knife from '../models/knife';
 
 const router = express.Router();
-// TODO
-// CREATE: Add a new book
-router.post('/books', async (req: Request, res: Response) => {
-    const { title, author, pages } = req.body;
+
+// CREATE: Add a new knife
+const createKnife: RequestHandler = async (req: Request, res: Response) => {
+    const { name, image, handle, blade, sharpness, price, durability, weight, length } = req.body;
     try {
-        const newBook = new Book({ title, author, pages });
-        const savedBook = await newBook.save();
-        res.json(savedBook);
-    } catch (err) {
+        const newKnife = new Knife({ name, image, handle, blade, sharpness, price, durability, weight, length });
+        const savedKnife = await newKnife.save();
+        res.json(savedKnife);
+    } catch (err: any) {
         res.status(400).json({ message: err.message });
     }
-});
+};
 
-// READ: Get all books
-router.get('/books', async (req: Request, res: Response) => {
+// READ: Get all knives
+const getAllKnives: RequestHandler = async (req: Request, res: Response) => {
     try {
-        const books = await Book.find();
-        res.json(books);
-    } catch (err) {
+        const knives = await Knife.find();
+        res.json(knives);
+    } catch (err: any) {
         res.status(500).json({ message: err.message });
     }
-});
+};
 
-// READ: Get a single book by ID
-router.get('/books/:id', async (req: Request, res: Response) => {
+// READ: Get a single knife by ID
+const getKnifeById: RequestHandler = async (req: Request, res: Response) => {
     try {
-        const book = await Book.findById(req.params.id);
-        if (!book) return res.status(404).json({ message: 'Book not found' });
-        res.json(book);
-    } catch (err) {
+        const knife = await Knife.findById(req.params.id);
+        res.json(knife);
+    } catch (err: any) {
         res.status(500).json({ message: err.message });
     }
-});
+};
 
-// UPDATE: Update a book by ID
-router.put('/books/:id', async (req: Request, res: Response) => {
-    const { title, author, pages } = req.body;
+// FILTER: Get all knives that match a field value
+const filterKnives: RequestHandler = async (req: Request, res: Response) => {
     try {
-        const updatedBook = await Book.findByIdAndUpdate(req.params.id, { title, author, pages }, { new: true });
-        if (!updatedBook) return res.status(404).json({ message: 'Book not found' });
-        res.json(updatedBook);
-    } catch (err) {
+        const filter = req.query;
+        const knives = await Knife.find(filter);
+        res.json(knives);
+    } catch (err: any) {
+        res.status(500).json({ message: err.message });
+    }
+};
+
+// UPDATE: Update a knife by ID
+const updateKnifeById: RequestHandler = async (req: Request, res: Response) => {
+    const { name, image, handle, blade, sharpness, price, durability, weight, length } = req.body;
+    try {
+        const updatedKnife = await Knife.findByIdAndUpdate(req.params.id, { name, image, handle, blade, sharpness, price, durability, weight, length }, { new: true });
+        res.json(updatedKnife);
+    } catch (err: any) {
         res.status(400).json({ message: err.message });
     }
-});
+};
 
-// DELETE: Delete a book by ID
-router.delete('/books/:id', async (req: Request, res: Response) => {
+// DELETE: Delete a knife by ID
+const deleteKnifeById: RequestHandler = async (req: Request, res: Response) => {
     try {
-        const deletedBook = await Book.findByIdAndDelete(req.params.id);
-        if (!deletedBook) return res.status(404).json({ message: 'Book not found' });
-        res.json({ message: 'Book deleted' });
-    } catch (err) {
+        const deletedKnife = await Knife.findByIdAndDelete(req.params.id);
+        res.json({ message: 'Knife deleted' });
+    } catch (err: any) {
         res.status(500).json({ message: err.message });
     }
-});
+};
+
+router.post('/knives', createKnife);
+router.post('/knives/filter', filterKnives);
+router.get('/knives', getAllKnives);
+router.get('/knives/:id', getKnifeById);
+router.put('/knives/:id', updateKnifeById);
+router.delete('/knives/:id', deleteKnifeById);
 
 export default router;
