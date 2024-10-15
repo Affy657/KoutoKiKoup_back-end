@@ -1,31 +1,17 @@
-import express, { Application } from 'express';
-import mongoose from 'mongoose';
-import bodyParser from 'body-parser';
-import cors from 'cors';
-import bookRoutes from './routes/bookRoutes';
+import express from 'express';
+import mongoose from './db';
 
-const app: Application = express();
-const PORT = process.env.PORT || 5000;
+const app = express();
+app.use(express.json());
 
-// Middleware
-app.use(cors());
-app.use(bodyParser.json());
-
-// MongoDB connection
-mongoose.connect('mongodb://localhost:27017/ts-crud-db', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-}).then(() => console.log("MongoDB connected"))
-    .catch(err => console.log(err));
-
-// Routes
-app.use('/api', bookRoutes);
-
-// Basic route
-app.get('/', (req, res) => {
-    res.send('Welcome to the TypeScript CRUD API');
+//Pour le test de la connexion à la base de données
+app.get('/status', (req, res) => {
+    const state = mongoose.connection.readyState;
+    const status = state === 1 ? 'Connecté' : 'Non connecté';
+    res.json({ status });
 });
 
-app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+    console.log(`Serveur démarré sur le port ${port}`);
 });
