@@ -1,13 +1,12 @@
 import express, { Request, Response, RequestHandler } from 'express';
 import Knife from '../models/knife';
-
 const router = express.Router();
 
 // CREATE: Add a new knife
 const createKnife: RequestHandler = async (req: Request, res: Response) => {
-    const { name, image, handle, blade, sharpness, price, durability, weight, length } = req.body;
+    const { name, image, handle, blade, sharpness, price, durability, weight, length, description } = req.body;
     try {
-        const newKnife = new Knife({ name, image, handle, blade, sharpness, price, durability, weight, length });
+        const newKnife = new Knife({ name, image, handle, blade, sharpness, price, durability, weight, length, description });
         const savedKnife = await newKnife.save();
         res.json(savedKnife);
     } catch (err: any) {
