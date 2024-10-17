@@ -11,6 +11,7 @@ Fonctionnalité :
 * Adrien Morand - adrien.morand@ynov.com  
 * Eliot Guihal - eliot.guihal@ynov.com
 * Florentin Portets florentin.portets@ynov.com
+* Rayane Guemmoud rayane.guemmoud@ynov.com
   
 ## Technos choisies  
 * Back :  Express.js
