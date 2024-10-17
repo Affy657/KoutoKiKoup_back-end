@@ -1,5 +1,5 @@
 import { Schema, model, Document } from 'mongoose';
-const enum Handle {
+enum Material {
     Wood = "wood",
     Horn = "horn",
     Metal = "metal",
@@ -19,8 +19,8 @@ const enum Handle {
 interface knife extends Document {
     name: string;
     image: string;
-    handle: Handle;
-    blade: string;
+    handle: Material;
+    blade: Material;
     sharpness: number;
     price: number;
     durability: number;
@@ -32,14 +32,16 @@ interface knife extends Document {
 const knifeSchema = new Schema<knife>({
     name: { type: String, required: true },
     image: { type: String, required: true },
-    handle: { type: String, required: true },
-    blade: { type: String, required: true },
-    sharpness: { type: Number, default: 5 },
-    durability: { type: Number, default: 0 },
+    handle: { type: String, required: true, enum: Object.values(Material) },
+    blade: { type: String, required: true, enum: Object.values(Material) },
+    sharpness: { type: Number, default: 5, min: 0, max: 10 },
+    durability: { type: Number, default: 0, min: 0, max: 10 },
     weight: { type: Number, default: 0 },
     length: { type: Number, default: 0 },
     price: { type: Number, required: true },
     description: { type: String, required: true }
 });
+
+knifeSchema.index({ name: 'text' });
 
 export default model<knife>('Knife', knifeSchema);
