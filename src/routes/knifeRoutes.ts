@@ -1,13 +1,11 @@
 import express, { Request, Response, RequestHandler } from 'express';
 import Knife from '../models/knife';
-
 const router = express.Router();
 
 // CREATE: Add a new knife
 const createKnife: RequestHandler = async (req: Request, res: Response) => {
-    const { name, image, handle, blade, sharpness, price, durability, weight, length } = req.body;
     try {
-        const newKnife = new Knife({ name, image, handle, blade, sharpness, price, durability, weight, length });
+        const newKnife = new Knife(req.body);
         const savedKnife = await newKnife.save();
         res.json(savedKnife);
     } catch (err: any) {
@@ -38,7 +36,17 @@ const getKnifeById: RequestHandler = async (req: Request, res: Response) => {
 // FILTER: Get all knives that match a field value
 const filterKnives: RequestHandler = async (req: Request, res: Response) => {
     try {
-        const filter = req.query;
+        const { name, ...otherFilters } = req.query;
+
+        let filter = { ...otherFilters };
+
+        if (name) {
+            filter = {
+                ...filter,
+                name: { $regex: name, $options: 'i' }
+            };
+        }
+
         const knives = await Knife.find(filter);
         res.json(knives);
     } catch (err: any) {
@@ -48,9 +56,8 @@ const filterKnives: RequestHandler = async (req: Request, res: Response) => {
 
 // UPDATE: Update a knife by ID
 const updateKnifeById: RequestHandler = async (req: Request, res: Response) => {
-    const { name, image, handle, blade, sharpness, price, durability, weight, length } = req.body;
     try {
-        const updatedKnife = await Knife.findByIdAndUpdate(req.params.id, { name, image, handle, blade, sharpness, price, durability, weight, length }, { new: true });
+        const updatedKnife = await Knife.findByIdAndUpdate(req.params.id, req.body, { new: true });
         res.json(updatedKnife);
     } catch (err: any) {
         res.status(400).json({ message: err.message });
@@ -67,11 +74,11 @@ const deleteKnifeById: RequestHandler = async (req: Request, res: Response) => {
     }
 };
 
-router.post('/knives', createKnife);
-router.post('/knives/filter', filterKnives);
-router.get('/knives', getAllKnives);
-router.get('/knives/:id', getKnifeById);
-router.put('/knives/:id', updateKnifeById);
-router.delete('/knives/:id', deleteKnifeById);
+router.post('/', createKnife);
+router.get('/filter', filterKnives);
+router.get('/', getAllKnives);
+router.get('/:id', getKnifeById);
+router.put('/:id', updateKnifeById);
+router.delete('/:id', deleteKnifeById);
 
 export default router;
