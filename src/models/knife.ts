@@ -1,4 +1,6 @@
 import { Schema, model, Document } from 'mongoose';
+import { userSchema } from './user';
+
 enum Material {
     Wood = "wood",
     Horn = "horn",
@@ -27,6 +29,7 @@ interface knife extends Document {
     weight: number;
     length: number;
     description: string;
+    userId: Schema.Types.ObjectId;
 }
 
 const knifeSchema = new Schema<knife>({
@@ -39,7 +42,8 @@ const knifeSchema = new Schema<knife>({
     weight: { type: Number, default: 0 },
     length: { type: Number, default: 0 },
     price: { type: Number, required: true },
-    description: { type: String, required: true }
+    description: { type: String, required: true },
+    userId: { type: Schema.Types.ObjectId, required: true, ref: 'User' }
 });
 
 knifeSchema.index({ name: 'text' });

@@ -1,11 +1,13 @@
 import express from 'express';
 import mongoose from './db';
-import router from './routes/knifeRoutes';
+import knifeRoutes from './routes/knifeRoutes';
+import userRoutes from './routes/userRoutes';
 
 const app = express();
 app.use(express.json());
 
-app.use('/knives', router);
+app.use('/knives', knifeRoutes);
+app.use('/users', userRoutes);
 
 //Pour le test de la connexion à la base de données
 app.get('/status', (req, res) => {
