@@ -31,7 +31,10 @@ const getAllKnives: RequestHandler = async (req: Request, res: Response) => {
 // READ: Get a single knife by ID
 const getKnifeById: RequestHandler = async (req: Request, res: Response) => {
     try {
-        res.json(res.locals.knife);
+        const knife = await Knife.findOne({_id: req.params.id }).populate('userId', {
+            password: 0
+        });
+        res.json(knife);
     } catch (err: any) {
         res.status(500).json({ message: err.message });
     }
