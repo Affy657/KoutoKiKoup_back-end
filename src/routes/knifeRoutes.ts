@@ -1,11 +1,16 @@
 import express, { Request, Response, RequestHandler } from 'express';
 import Knife from '../models/knife';
+import auth from '../middlewares/auth';
+import { verifySelfknife } from '../middlewares/knife';
 const router = express.Router();
 
 // CREATE: Add a new knife
 const createKnife: RequestHandler = async (req: Request, res: Response) => {
     try {
-        const newKnife = new Knife(req.body);
+        const newKnife = new Knife({
+            ...req.body,
+            userId: res.locals.user._id
+        });
         const savedKnife = await newKnife.save();
         res.json(savedKnife);
     } catch (err: any) {
@@ -26,7 +31,9 @@ const getAllKnives: RequestHandler = async (req: Request, res: Response) => {
 // READ: Get a single knife by ID
 const getKnifeById: RequestHandler = async (req: Request, res: Response) => {
     try {
-        const knife = await Knife.findById(req.params.id);
+        const knife = await Knife.findOne({_id: req.params.id }).populate('userId', {
+            password: 0
+        });
         res.json(knife);
     } catch (err: any) {
         res.status(500).json({ message: err.message });
@@ -47,7 +54,9 @@ const filterKnives: RequestHandler = async (req: Request, res: Response) => {
             };
         }
 
-        const knives = await Knife.find(filter);
+        const knives = await Knife.find(filter).populate('userId', {
+            password: 0
+        });
         res.json(knives);
     } catch (err: any) {
         res.status(500).json({ message: err.message });
@@ -84,12 +93,12 @@ const deleteKnifeById: RequestHandler = async (req: Request, res: Response) => {
     }
 };
 
-router.post('/', createKnife);
+router.post('/', auth, createKnife);
 router.get('/filter', filterKnives);
 router.get('/autocomplete', autocompleteKnives);
 router.get('/', getAllKnives);
 router.get('/:id', getKnifeById);
-router.put('/:id', updateKnifeById);
-router.delete('/:id', deleteKnifeById);
+router.put('/:id', auth, verifySelfknife('params'), updateKnifeById);
+router.delete('/:id', auth, verifySelfknife('params'), deleteKnifeById);
 
 export default router;
