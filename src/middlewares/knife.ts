@@ -22,7 +22,7 @@ const verifySelfknife = (from: From): RequestHandler => {
         throw new Error('Knife not found');
       }
 
-      if (knife.userId.toString() !== _id) {
+      if (knife.userId.toString() !== _id.toString()) {
         throw new Error('Unauthorized');
       }
 

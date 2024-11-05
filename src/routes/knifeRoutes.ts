@@ -4,7 +4,6 @@ import auth from '../middlewares/auth';
 import { verifySelfknife } from '../middlewares/knife';
 const router = express.Router();
 
-// CREATE: Add a new knife
 const createKnife: RequestHandler = async (req: Request, res: Response) => {
     try {
         const newKnife = new Knife({
@@ -18,7 +17,6 @@ const createKnife: RequestHandler = async (req: Request, res: Response) => {
     }
 };
 
-// READ: Get all knives
 const getAllKnives: RequestHandler = async (req: Request, res: Response) => {
     try {
         const knives = await Knife.find();
@@ -28,7 +26,6 @@ const getAllKnives: RequestHandler = async (req: Request, res: Response) => {
     }
 };
 
-// READ: Get a single knife by ID
 const getKnifeById: RequestHandler = async (req: Request, res: Response) => {
     try {
         const knife = await Knife.findOne({_id: req.params.id }).populate('userId', {
@@ -40,7 +37,6 @@ const getKnifeById: RequestHandler = async (req: Request, res: Response) => {
     }
 };
 
-// FILTER: Get all knives that match a field value
 const filterKnives: RequestHandler = async (req: Request, res: Response) => {
     try {
         const { name, ...otherFilters } = req.query;
@@ -63,7 +59,6 @@ const filterKnives: RequestHandler = async (req: Request, res: Response) => {
     }
 };
 
-// UPDATE: Update a knife by ID
 const updateKnifeById: RequestHandler = async (req: Request, res: Response) => {
     try {
         const updatedKnife = await Knife.findByIdAndUpdate(req.params.id, req.body, { new: true });
@@ -83,7 +78,6 @@ const autocompleteKnives: RequestHandler = async (req: Request, res: Response) =
     }
 };
 
-// DELETE: Delete a knife by ID
 const deleteKnifeById: RequestHandler = async (req: Request, res: Response) => {
     try {
         const deletedKnife = await Knife.findByIdAndDelete(req.params.id);

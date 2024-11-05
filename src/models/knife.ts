@@ -1,5 +1,4 @@
 import { Schema, model, Document } from 'mongoose';
-import { userSchema } from './user';
 
 enum Material {
     Wood = "wood",
@@ -20,7 +19,7 @@ enum Material {
 
 interface knife extends Document {
     name: string;
-    image: string;
+    images: string[];
     handle: Material;
     blade: Material;
     sharpness: number;
@@ -34,7 +33,7 @@ interface knife extends Document {
 
 const knifeSchema = new Schema<knife>({
     name: { type: String, required: true },
-    image: { type: String, required: true },
+    images: { type: [String], required: true }, // Définir images comme un tableau de chaînes de caractères
     handle: { type: String, required: true, enum: Object.values(Material) },
     blade: { type: String, required: true, enum: Object.values(Material) },
     sharpness: { type: Number, default: 5, min: 0, max: 10 },
