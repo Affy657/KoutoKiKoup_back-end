@@ -147,9 +147,14 @@ const updateKnifeById: RequestHandler = async (req: Request, res: Response) => {
 
 const autocompleteKnives: RequestHandler = async (req: Request, res: Response) => {
     try {
-        const { term } = req.query;
-        const knives = await Knife.find({ name: { $regex: term, $options: 'i' } }).select('name');
-        res.json(knives);
+        const { term } = req.query;  
+        if (!term) {
+            res.status(400).json({ message: "Search term is required" });
+            return void 0;
+        }
+        const regex = new RegExp(term as string, 'i'); 
+        const knives = await Knife.find({ name: { $regex: regex } }).select('name');
+        res.json(knives.map(knife => knife.name)); 
     } catch (err: any) {
         res.status(500).json({ message: err.message });
     }
