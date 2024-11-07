@@ -28,8 +28,7 @@ const getFileExt = (mimeType: string) => {
     }
 }
 
-// CREATE: Add a new knife
-const createKnife: RequestHandler = async (req: Request, res: Response): Promise<void> => {
+const createKnife: RequestHandler = async (req: Request, res: Response) => {
     try {
         if (!req.files) {
             res.status(400).json({ message: 'No files uploaded' });
@@ -95,7 +94,6 @@ const createKnife: RequestHandler = async (req: Request, res: Response): Promise
     }
 };
 
-// READ: Get all knives
 const getAllKnives: RequestHandler = async (req: Request, res: Response) => {
     try {
         const knives = await Knife.find();
@@ -105,7 +103,6 @@ const getAllKnives: RequestHandler = async (req: Request, res: Response) => {
     }
 };
 
-// READ: Get a single knife by ID
 const getKnifeById: RequestHandler = async (req: Request, res: Response) => {
     try {
         const knife = await Knife.findOne({_id: req.params.id }).populate('userId', {
@@ -117,7 +114,6 @@ const getKnifeById: RequestHandler = async (req: Request, res: Response) => {
     }
 };
 
-// FILTER: Get all knives that match a field value
 const filterKnives: RequestHandler = async (req: Request, res: Response) => {
     try {
         const { name, ...otherFilters } = req.query;
@@ -140,7 +136,6 @@ const filterKnives: RequestHandler = async (req: Request, res: Response) => {
     }
 };
 
-// UPDATE: Update a knife by ID
 const updateKnifeById: RequestHandler = async (req: Request, res: Response) => {
     try {
         const updatedKnife = await Knife.findByIdAndUpdate(req.params.id, req.body, { new: true });
@@ -150,7 +145,16 @@ const updateKnifeById: RequestHandler = async (req: Request, res: Response) => {
     }
 };
 
-// DELETE: Delete a knife by ID
+const autocompleteKnives: RequestHandler = async (req: Request, res: Response) => {
+    try {
+        const { term } = req.query;
+        const knives = await Knife.find({ name: { $regex: term, $options: 'i' } }).select('name');
+        res.json(knives);
+    } catch (err: any) {
+        res.status(500).json({ message: err.message });
+    }
+};
+
 const deleteKnifeById: RequestHandler = async (req: Request, res: Response) => {
     try {
         const deletedKnife = await Knife.findByIdAndDelete(req.params.id);
@@ -162,6 +166,7 @@ const deleteKnifeById: RequestHandler = async (req: Request, res: Response) => {
 
 router.post('/', auth, upload.array('images', 5), createKnife);
 router.get('/filter', filterKnives);
+router.get('/autocomplete', autocompleteKnives);
 router.get('/', getAllKnives);
 router.get('/:id', getKnifeById);
 router.put('/:id', auth, verifySelfknife('params'), updateKnifeById);
