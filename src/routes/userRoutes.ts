@@ -30,7 +30,8 @@ const signUp: RequestHandler = async (req: Request, res: Response) => {
     const user = {
       _id: savedUser._id,
       username: savedUser.username,
-      token
+      token,
+      role: savedUser.role
     };
 
     res.json(user);
@@ -59,7 +60,8 @@ const logIn: RequestHandler = async (req: Request, res: Response) => {
     res.json({
       _id: user._id,
       username: user.username,
-      token
+      token,
+      role: user.role
     });
   } catch (err: any) {
     res.status(400).json({ message: err.message });
