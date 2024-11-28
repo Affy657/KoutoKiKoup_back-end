@@ -12,7 +12,7 @@ interface user extends Document {
 }
 
 export const userSchema = new Schema<user>({
-  username: { type: String, required: true },
+  username: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   role: { type: String, default: Role.User, enum: Object.values(Role) }
 });
